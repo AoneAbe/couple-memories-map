@@ -13,7 +13,7 @@ export interface Memory {
   user?: User | null;
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: PlaceDetails;
+  placeDetails?: PlaceDetails | null;
   createdBy?: string | null;
   updatedBy?: string | null;
   // 関連するメモリー画像
