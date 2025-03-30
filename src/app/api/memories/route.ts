@@ -75,7 +75,15 @@ export async function POST(req: NextRequest) {
         stampType: body.stampType || 'default',
         address: body.address,
         placeName: body.placeName,
-        placeDetails: body.placeDetails ? body.placeDetails : undefined,
+        placeDetails: body.placeDetails ? {
+          formatted_address: body.placeDetails.formatted_address,
+          name: body.placeDetails.name,
+          geometry: body.placeDetails.geometry,
+          photos: body.placeDetails.photos,
+          url: body.placeDetails.url,
+          place_id: body.placeDetails.place_id,
+          types: body.placeDetails.types
+        } : undefined,
         userId: session.user.id,
         memoryImages: {
           create: imageData

@@ -57,7 +57,7 @@ export default function MemoryForm({ location, onSubmit, onCancel }: MemoryFormP
       }
       
       if (file.size > MAX_FILE_SIZE) {
-        setUploadError('ファイルサイズは10MB以下にしてください');
+        setUploadError('ファイルサイズは1GB以下にしてください');
         return;
       }
       

@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import { Memory, MemoryFormData, LocationWithDetails } from '@/utils/types';
+import { Memory, MemoryFormData, PlaceDetails, LocationWithDetails } from '@/utils/types';
 import MemoryForm from './MemoryForm';
 import { getPlaceDetails } from '@/utils/mapUtils';
 
@@ -61,7 +61,7 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
         ...clickedLocation,
         address: placeDetails?.address || '',
         placeName: placeDetails?.placeName || '',
-        fullDetails: placeDetails?.fullDetails || null
+        fullDetails: placeDetails?.fullDetails as unknown as PlaceDetails || null
       });
       setSelectedMemory(null);
       setIsFormOpen(true);
