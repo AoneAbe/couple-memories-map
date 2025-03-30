@@ -50,7 +50,7 @@ export interface Wishlist {
   longitude: number;
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: any;
+  placeDetails?: PlaceDetails;
   priority: number;
   isVisited: boolean;
   createdAt: Date;
