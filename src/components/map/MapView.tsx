@@ -29,7 +29,7 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
     googleMapsApiKey: apiKey
   });
 
-  const [_map, setMap] = useState<google.maps.Map | null>(null);
+  const [, setMap] = useState<google.maps.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationWithDetails | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -86,7 +86,7 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
 
   const handleFormSubmit = async (data: MemoryFormData) => {
     try {
-      const _newMemory = await onMemoryCreate(data);
+      await onMemoryCreate(data);
       setIsFormOpen(false);
       setSelectedLocation(null);
 

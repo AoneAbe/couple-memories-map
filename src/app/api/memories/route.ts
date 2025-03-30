@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
     
     // 画像データを抽出
-    const imageData = body.images?.map((img: any) => ({
+    const imageData = body.uploadedImages?.map((img: {url?: string, filename: string, type: string}) => ({
       url: img.url,
       filename: img.filename,
       type: img.type || 'image'

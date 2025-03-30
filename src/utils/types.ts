@@ -13,7 +13,7 @@ export interface Memory {
   user?: User | null;
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: Record<string, unknown>;
+  placeDetails?: PlaceDetails;
   createdBy?: string | null;
   updatedBy?: string | null;
   // 関連するメモリー画像
@@ -71,7 +71,7 @@ export interface MemoryFormData {
   uploadedImages?: UploadedImage[];
   address?: string;
   placeName?: string;
-  placeDetails?: any;
+  placeDetails?: PlaceDetails;
 }
 
 export interface LocationWithDetails extends google.maps.LatLngLiteral {
@@ -79,7 +79,7 @@ export interface LocationWithDetails extends google.maps.LatLngLiteral {
   lng: number;
   address?: string;
   placeName?: string;
-  fullDetails?: any;
+  fullDetails?: Record<string, unknown>;
 }
 
 export interface UploadedImage {
@@ -89,4 +89,16 @@ export interface UploadedImage {
   type: 'image' | 'video';
   filename: string;
   url?: string;
+}
+
+interface PlaceDetails {
+  formatted_address?: string;
+  geometry?: {
+    location?: {
+      lat: number;
+      lng: number;
+    }
+  };
+  name?: string;
+  [key: string]: unknown;
 }
