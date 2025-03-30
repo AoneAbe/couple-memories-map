@@ -1,3 +1,9 @@
+interface PlaceComponent {
+  types: string[];
+  long_name: string;
+  [key: string]: any;
+}
+
 export async function getPlaceDetails(lat: number, lng: number) {
     try {
       const response = await fetch(
@@ -13,7 +19,7 @@ export async function getPlaceDetails(lat: number, lng: number) {
         // 場所の種類や名前を抽出 (可能な場合)
         const placeComponents = data.results[0].address_components;
         const placeName = placeComponents.find(
-          (component: any) => component.types.includes('point_of_interest')
+          (component: PlaceComponent) => component.types.includes('point_of_interest')
         )?.long_name || '';
         
         return {

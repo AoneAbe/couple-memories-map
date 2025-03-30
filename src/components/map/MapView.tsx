@@ -29,7 +29,7 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
     googleMapsApiKey: apiKey
   });
 
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [_map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationWithDetails | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -86,7 +86,7 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
 
   const handleFormSubmit = async (data: MemoryFormData) => {
     try {
-      const newMemory = await onMemoryCreate(data);
+      const _newMemory = await onMemoryCreate(data);
       setIsFormOpen(false);
       setSelectedLocation(null);
 
@@ -101,8 +101,8 @@ export default function MapView({ apiKey, memories, onMemoryCreate }: MapViewPro
   return isLoaded ? (
     <div className="relative w-full h-full">
 
-       {/* 表示モード切替ボタン */}
-       <div className="absolute top-4 left-4 z-10">
+      {/* 表示モード切替ボタン */}
+      <div className="absolute top-4 left-4 z-10">
         <button 
           onClick={() => setDisplayMode(displayMode === 'normal' ? 'memories' : 'normal')}
           className="px-4 py-2 bg-white rounded-md shadow-md text-sm font-medium transition hover:bg-gray-50"

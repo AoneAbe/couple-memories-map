@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     
     // Supabase Storageにアップロード
     const supabase = supabaseAdmin();
-    const { data, error } = await supabase
+    const { error } = await supabase
       .storage
       .from('memory-media') // バケット名（事前に作成しておく必要あり）
       .upload(filePath, fileBuffer, {
