@@ -115,7 +115,7 @@ export default function MemoryForm({ location, onSubmit, onCancel }: MemoryFormP
         longitude: location.lng,
         date: date ? new Date(date) : undefined,
         stampType,
-        uploadedImages: uploadedFiles,
+        images: uploadedFiles,
         address: location.address,
         placeName: location.placeName,
         placeDetails: location.fullDetails
