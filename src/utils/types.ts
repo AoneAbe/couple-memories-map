@@ -1,3 +1,9 @@
+import { Prisma } from '@prisma/client';
+
+// Prismaが生成するJSONの型を利用
+export type JsonValue = Prisma.JsonValue;
+export type JsonObject = Prisma.JsonObject;
+
 // DB－Tableの型定義
 export interface Memory {
   id: string;
@@ -13,11 +19,12 @@ export interface Memory {
   user?: User | null;
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: PlaceDetails | null;
+  placeDetails?: PlaceDetails | JsonValue | null;
   createdBy?: string | null;
   updatedBy?: string | null;
   // 関連するメモリー画像
   memoryImages?: MemoryImage[];
+  images?: UploadedImage[];
 }
 
 export interface MemoryImage {
@@ -50,7 +57,7 @@ export interface Wishlist {
   longitude: number;
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: PlaceDetails | null;
+  placeDetails?: PlaceDetails | JsonValue | null;
   priority: number;
   isVisited: boolean;
   createdAt: Date;
@@ -110,10 +117,10 @@ export interface MemoryFormData {
   longitude: number;
   date?: Date;
   stampType: string;
-  uploadedImages?: UploadedImage[];
+  images?: UploadedImage[];
   address?: string;
   placeName?: string;
-  placeDetails?: PlaceDetails | null;
+  placeDetails?: PlaceDetails | JsonValue | null;
 }
 
 export interface LocationWithDetails extends google.maps.LatLngLiteral {
@@ -121,7 +128,7 @@ export interface LocationWithDetails extends google.maps.LatLngLiteral {
   lng: number;
   address?: string;
   placeName?: string;
-  fullDetails?: PlaceDetails | null;
+  fullDetails?: PlaceDetails | JsonValue | null;
 }
 
 export interface UploadedImage {
