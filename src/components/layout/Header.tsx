@@ -16,7 +16,7 @@ export default function Header() {
                 Couple Memories Map
               </Link>
             </div>
-            <nav className="ml-6 flex space-x-4 items-center">
+            <nav className="ml-6 flex space-x-4 items-center overflow-x-auto pb-1">
               <Link 
                 href="/map" 
                 className={`px-3 py-2 rounded-md text-sm font-medium ${
@@ -36,6 +36,16 @@ export default function Header() {
                 }`}
               >
                 思い出一覧
+              </Link>
+              <Link 
+                href="/wishlist" 
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  pathname === '/wishlist' 
+                    ? 'bg-pink-100 text-pink-800' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                行きたい場所
               </Link>
             </nav>
           </div>

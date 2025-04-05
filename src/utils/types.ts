@@ -139,3 +139,22 @@ export interface UploadedImage {
   filename: string;
   url?: string;
 }
+
+export interface WishlistPlace {
+  id: string;
+  title: string;
+  description?: string | null;
+  latitude: number;
+  longitude: number;
+  priority: number; // 優先度（1-5等）
+  address?: string | null;
+  placeName?: string | null;
+  placeDetails?: any;
+  createdAt: Date;
+  updatedAt: Date;
+  userId?: string | null;
+}
+
+export type FormMode = 'memory' | 'wishlist';
+// LocationModeを追加して、マップの表示モードを管理
+export type LocationMode = 'normal' | 'memories';
