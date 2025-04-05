@@ -348,12 +348,12 @@ export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCrea
             onCloseClick={() => setSelectedMemory(null)}
           >
             <div className="p-2 max-w-xs">
-              <h3 className="font-bold text-lg">{selectedMemory.title}</h3>
+              <h3 className="font-bold text-lg text-gray-900">{selectedMemory.title}</h3>
               <p className="text-sm text-gray-600">
                 {new Date(selectedMemory.date).toLocaleDateString('ja-JP')}
               </p>
               {selectedMemory.description && (
-                <p className="mt-2 text-sm">{selectedMemory.description}</p>
+                <p className="mt-2 text-sm text-gray-900">{selectedMemory.description}</p>
               )}
               {selectedMemory.address && (
                 <p className="mt-2 text-sm text-gray-600">{selectedMemory.address}</p>

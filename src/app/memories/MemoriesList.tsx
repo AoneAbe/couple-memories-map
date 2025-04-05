@@ -45,7 +45,7 @@ export default function MemoriesList({ initialMemories }: MemoriesListProps) {
                       </div>
                     </div>
                     <div>
-                      <h2 className="text-xl font-semibold mb-1">{memory.title}</h2>
+                      <h2 className="text-xl font-semibold mb-1 text-gray-900">{memory.title}</h2>
                       <p className="text-sm text-gray-500 mb-2">
                         {memory.date instanceof Date 
                           ? format(new Date(memory.date), 'yyyy年MM月dd日', { locale: ja })
