@@ -29,8 +29,8 @@ const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
 export default function MemoryForm({ location, initialData, onSubmit, onCancel }: MemoryFormProps) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState(initialData?.title || '');
+  const [description, setDescription] = useState(initialData?.description || '');
   const [date, setDate] = useState<string>(
     initialData?.date
     ? new Date(initialData.date).toISOString().split('T')[0]
@@ -147,7 +147,9 @@ export default function MemoryForm({ location, initialData, onSubmit, onCancel }
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">新しい思い出を記録</h2>
+      <h2 className="text-xl font-bold mb-4">
+        {initialData ? '思い出を編集' : '新しい思い出を記録'}
+      </h2>
       
         {/* 場所の詳細情報を表示 */}
         {location.address && (
@@ -173,6 +175,7 @@ export default function MemoryForm({ location, initialData, onSubmit, onCancel }
             onChange={(e) => setTitle(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             required
+            placeholder={initialData?.title || 'タイトルを入力'}
           />
         </div>
         
@@ -186,6 +189,7 @@ export default function MemoryForm({ location, initialData, onSubmit, onCancel }
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder={initialData?.description || '思い出の詳細を入力してください'}
           />
         </div>
         
@@ -317,7 +321,7 @@ export default function MemoryForm({ location, initialData, onSubmit, onCancel }
             className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
             disabled={isSubmitting}
           >
-            {isSubmitting ? '保存中...' : '保存する'}
+            {isSubmitting ? '保存中...' : initialData ? '更新する' : '保存する'}
           </button>
         </div>
       </form>

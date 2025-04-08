@@ -73,7 +73,7 @@ export default function MapContainer({ initialMemories, initialWishlistPlaces }:
   };
 
   // 思い出の更新ハンドラ
-  const handleUpdateMemories = (updatedMemories: Memory[]) => {
+  const handleUpdateMemory = (updatedMemories: Memory[]) => {
     setMemories(updatedMemories);
   };
 
@@ -97,7 +97,7 @@ export default function MapContainer({ initialMemories, initialWishlistPlaces }:
             onMemoryCreate={handleCreateMemory}
             onWishlistCreate={handleCreateWishlist}
             onMemoryDelete={handleDeleteMemory}
-            onMemoryUpdate={handleUpdateMemories}
+            onMemoryUpdate={handleUpdateMemory}
           />
         )}
       </div>

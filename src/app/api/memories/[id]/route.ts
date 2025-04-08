@@ -49,22 +49,97 @@ export async function PUT(
       );
     }
     
+    // 画像データを抽出
+    const imageData = body.images?.map((img: {url?: string, filename: string, type: string, id?: string}) => {
+      // 既存の画像はそのまま（idがある場合）
+      if (img.id) {
+        return {
+          id: img.id,
+          url: img.url,
+          filename: img.filename,
+          type: img.type || 'image'
+        };
+      }
+      
+      // 新しい画像は作成（idがない場合）
+      return {
+        url: img.url,
+        filename: img.filename,
+        type: img.type || 'image'
+      };
+    }) || [];
+
     // Memoryエントリを更新
     const updatedMemory = await prisma.memory.update({
       where: { id },
       data: {
         title: body.title,
         description: body.description,
+        latitude: body.latitude,
+        longitude: body.longitude,
         date: body.date ? new Date(body.date) : undefined,
         stampType: body.stampType || 'default',
-        // 他のフィールドも更新
+        address: body.address,
+        placeName: body.placeName,
+        placeDetails: body.placeDetails ? {
+          formatted_address: body.placeDetails.formatted_address,
+          name: body.placeDetails.name,
+          geometry: body.placeDetails.geometry,
+          photos: body.placeDetails.photos,
+          url: body.placeDetails.url,
+          place_id: body.placeDetails.place_id,
+          types: body.placeDetails.types
+        } : undefined,
       },
       include: {
         memoryImages: true
       }
     });
+
+    // 既存の画像IDを取得
+    const existingImageIds = updatedMemory.memoryImages.map(img => img.id);
     
-    return NextResponse.json(updatedMemory);
+    // 送信された画像IDを取得
+    const submittedImageIds = imageData
+      .filter((img: any) => img.id)
+      .map((img: any) => img.id);
+    
+    // 削除する画像を特定
+    const imagesToDelete = existingImageIds.filter(id => !submittedImageIds.includes(id));
+    
+    // 画像の削除
+    if (imagesToDelete.length > 0) {
+      await prisma.memoryImage.deleteMany({
+        where: {
+          id: { in: imagesToDelete }
+        }
+      });
+    }
+    
+    // 新しい画像を追加
+    const newImages = imageData.filter((img: any) => !img.id);
+    
+    if (newImages.length > 0) {
+      await prisma.memoryImage.createMany({
+        data: newImages.map((img: any) => ({
+          memoryId: id,
+          url: img.url,
+          filename: img.filename,
+          type: img.type,
+          createdBy: session.user.id
+        }))
+      });
+    }
+    
+    // 更新後のメモリを再取得
+    const finalMemory = await prisma.memory.findUnique({
+      where: { id },
+      include: {
+        memoryImages: true
+      }
+    });
+    
+    return NextResponse.json(finalMemory);
   } catch (error) {
     console.error('Error updating memory:', error);
     return NextResponse.json(

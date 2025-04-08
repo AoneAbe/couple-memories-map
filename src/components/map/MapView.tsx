@@ -7,6 +7,7 @@ import MemoryForm from './MemoryForm';
 import WishlistForm from './WishlistForm';
 import CombinedLocationForm from './CombinedLocationForm';
 import { getPlaceDetails } from '@/utils/mapUtils';
+import Image from 'next/image';
 
 const containerStyle = {
   width: '100%',
@@ -29,7 +30,15 @@ interface MapViewProps {
   onMemoryUpdate?: (updatedMemory: Memory[]) => void;
 }
 
-export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCreate, onWishlistCreate }: MapViewProps) {
+export default function MapView({ 
+  apiKey,
+  memories,
+  wishlistPlaces,
+  onMemoryCreate,
+  onWishlistCreate,
+  onMemoryDelete,
+  onMemoryUpdate
+}: MapViewProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: apiKey
@@ -45,6 +54,7 @@ export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCrea
   const [tempMarker, setTempMarker] = useState<google.maps.LatLngLiteral | null>(null);
   const [showMemories, setShowMemories] = useState(true);
   const [showWishlist, setShowWishlist] = useState(true);
+  const [viewMode, setViewMode] = useState<'view' | 'edit'>('view');
 
   const mapRef = useRef<google.maps.Map | null>(null);
 
@@ -84,7 +94,7 @@ export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCrea
 
   const handleMarkerClick = (memory: Memory) => {
     setSelectedMemory(memory);
-    setSelectedLocation(null);
+    setViewMode('view');
     setIsFormOpen(false);
 
     // メモリの位置に地図を移動
@@ -345,23 +355,167 @@ export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCrea
 
         {/* 選択した思い出の情報ウィンドウ */}
         {selectedMemory && (
-          <InfoWindow
-            position={{ lat: selectedMemory.latitude, lng: selectedMemory.longitude }}
-            onCloseClick={() => setSelectedMemory(null)}
-          >
-            <div className="p-2 max-w-xs">
-              <h3 className="font-bold text-lg text-gray-900">{selectedMemory.title}</h3>
-              <p className="text-sm text-gray-600">
-                {new Date(selectedMemory.date).toLocaleDateString('ja-JP')}
-              </p>
-              {selectedMemory.description && (
-                <p className="mt-2 text-sm text-gray-900">{selectedMemory.description}</p>
-              )}
-              {selectedMemory.address && (
-                <p className="mt-2 text-sm text-gray-600">{selectedMemory.address}</p>
-              )}
-            </div>
-          </InfoWindow>
+          <div className="absolute right-4 top-4 w-full sm:w-96 max-w-[calc(100%-2rem)] bg-white rounded-lg shadow-lg">
+            {viewMode === 'view' ? (
+              // 詳細表示モード
+              <div className="p-5">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold">{selectedMemory.title}</h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setViewMode('edit')}
+                      className="text-blue-600 hover:text-blue-800 p-1"
+                      title="編集"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => setSelectedMemory(null)}
+                      className="text-gray-600 hover:text-gray-800 p-1"
+                      title="閉じる"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <p className="text-sm text-gray-500">
+                    {new Date(selectedMemory.date).toLocaleDateString('ja-JP')}
+                  </p>
+                </div>
+
+                {selectedMemory.description && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-1">思い出の詳細</h4>
+                    <p className="text-gray-800">{selectedMemory.description}</p>
+                  </div>
+                )}
+
+                {selectedMemory.address && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-1">場所</h4>
+                    <p className="text-gray-800">{selectedMemory.address}</p>
+                  </div>
+                )}
+
+                {/* 画像があれば表示 */}
+                {selectedMemory.memoryImages && selectedMemory.memoryImages.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">画像</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedMemory.memoryImages.map((image) => (
+                        <div key={image.id} className="aspect-square relative overflow-hidden rounded">
+                          {image.type === 'video' ? (
+                            <video 
+                              src={image.url} 
+                              className="w-full h-full object-cover" 
+                              controls
+                            />
+                          ) : (
+                            <Image
+                              src={image.url}
+                              alt={image.filename}
+                              fill
+                              sizes="(max-width: 768px) 50vw, 33vw"
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-t pt-4 mt-4 flex justify-end">
+                  <button
+                    onClick={async () => {
+                      if (confirm('この思い出を削除しますか？')) {
+                        try {
+                          const response = await fetch(`/api/memories/${selectedMemory.id}`, {
+                            method: 'DELETE',
+                          });
+                          
+                          if (!response.ok) {
+                            throw new Error('削除に失敗しました');
+                          }
+                          
+                          // 削除成功したらリストから削除し、サイドバーを閉じる
+                          if (onMemoryDelete) {
+                            onMemoryDelete(selectedMemory.id);
+                          }
+                          setSelectedMemory(null);
+                        } catch (error) {
+                          console.error('Error deleting memory:', error);
+                          alert('削除中にエラーが発生しました');
+                        }
+                      }
+                    }}
+                    className="text-sm text-red-600 hover:text-red-800 transition flex items-center cursor-pointer"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    削除
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // 編集モード
+              <MemoryForm
+                location={{
+                  lat: selectedMemory.latitude,
+                  lng: selectedMemory.longitude,
+                  address: selectedMemory.address || '',
+                  placeName: selectedMemory.placeName || '',
+                  fullDetails: selectedMemory.placeDetails || null
+                }}
+                initialData={selectedMemory}
+                onSubmit={async (data) => {
+                  try {
+                    // 編集APIを呼び出す
+                    const response = await fetch(`/api/memories/${selectedMemory.id}`, {
+                      method: 'PUT',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify(data),
+                    });
+
+                    if (!response.ok) {
+                      throw new Error('更新に失敗しました');
+                    }
+
+                    const updatedMemory = await response.json();
+                    
+                    // メモリーリストを更新
+                    const updatedMemories = memories.map(memory => 
+                      memory.id === updatedMemory.id ? updatedMemory : memory
+                    );
+                    
+                    // 親コンポーネントに通知
+                    if (onMemoryUpdate) {
+                      onMemoryUpdate(updatedMemories);
+                    }
+                    
+                    // 更新された思い出を表示する
+                    setSelectedMemory(updatedMemory);
+                    setViewMode('view');
+                  } catch (error) {
+                    console.error('Memory update error:', error);
+                    alert('思い出の更新中にエラーが発生しました');
+                  }
+                }}
+                onCancel={() => {
+                  setViewMode('view');
+                }}
+              />
+            )}
+          </div>
         )}
 
         {/* 選択した行きたい場所の情報ウィンドウ */}
