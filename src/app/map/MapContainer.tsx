@@ -71,6 +71,16 @@ export default function MapContainer({ initialMemories, initialWishlistPlaces }:
       throw err;
     }
   };
+
+  // 思い出の更新ハンドラ
+  const handleUpdateMemories = (updatedMemories: Memory[]) => {
+    setMemories(updatedMemories);
+  };
+
+  // 思い出の削除ハンドラ
+  const handleDeleteMemory = (memoryId: string) => {
+    setMemories((prevMemories) => prevMemories.filter(memory => memory.id !== memoryId));
+  };
   
   return (
     <Layout>
@@ -86,6 +96,8 @@ export default function MapContainer({ initialMemories, initialWishlistPlaces }:
             wishlistPlaces={wishlistPlaces}
             onMemoryCreate={handleCreateMemory}
             onWishlistCreate={handleCreateWishlist}
+            onMemoryDelete={handleDeleteMemory}
+            onMemoryUpdate={handleUpdateMemories}
           />
         )}
       </div>

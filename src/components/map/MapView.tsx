@@ -25,6 +25,8 @@ interface MapViewProps {
   wishlistPlaces: WishlistPlace[];
   onMemoryCreate: (memoryData: MemoryFormData) => Promise<Memory>;
   onWishlistCreate: (wishlistData: Omit<WishlistPlace, 'id' | 'createdAt' | 'updatedAt'>) => Promise<WishlistPlace>;
+  onMemoryDelete?: (memoryId: string) => void;
+  onMemoryUpdate?: (updatedMemory: Memory[]) => void;
 }
 
 export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCreate, onWishlistCreate }: MapViewProps) {
@@ -199,7 +201,7 @@ export default function MapView({ apiKey, memories, wishlistPlaces, onMemoryCrea
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={defaultCenter}
-        zoom={10}
+        zoom={13}
         onLoad={onLoad}
         onUnmount={onUnmount}
         onClick={handleMapClick}

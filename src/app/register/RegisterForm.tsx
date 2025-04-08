@@ -41,6 +41,23 @@ export default function RegisterForm() {
       return;
     }
 
+    // メールアドレスの重複チェック
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: "dummy_password_for_check" // 存在チェック用のダミー
+      });
+      
+      // エラーが特定のフォーマットでない場合、ユーザーが既に存在する
+      if (!error || !error.message.includes("Invalid login credentials")) {
+        setError('このメールアドレスは既に登録されています。ログインしてください。');
+        setIsLoading(false);
+        return;
+      }
+    } catch (checkErr) {
+      // チェック時のエラーは無視 (ユーザーが存在しない場合は期待どおり)
+    }
+
     try {
       // Supabaseで直接ユーザー登録を行う
       const { data, error: signUpError } = await supabase.auth.signUp({

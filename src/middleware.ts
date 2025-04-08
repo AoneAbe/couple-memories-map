@@ -18,9 +18,25 @@ export async function middleware(req: NextRequest) {
     // ログインしていない場合はログインページにリダイレクト
     if (!session) {
       const url = new URL('/login', req.url);
-      url.searchParams.set('callbackUrl', path);
+      url.searchParams.set('callbackUrl', encodeURIComponent(path));
       return NextResponse.redirect(url);
     }
+  }
+  
+   // ルートページにアクセスした場合、ログイン状態によってリダイレクト
+   if (path === '/') {
+    const session = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    
+    // ログインしていない場合はログインページにリダイレクト
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+    
+    // ログイン済みの場合はマップページにリダイレクト
+    return NextResponse.redirect(new URL('/map', req.url));
   }
   
   return NextResponse.next();
@@ -28,6 +44,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
     '/map/:path*',
     '/memories/:path*',
   ],

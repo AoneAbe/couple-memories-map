@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { MemoryFormData, LocationWithDetails, UploadedImage } from '@/utils/types';
+import { Memory, MemoryFormData, LocationWithDetails, UploadedImage } from '@/utils/types';
 import Image from 'next/image';
 
 interface MemoryFormProps {
   location: LocationWithDetails;
+  initialData?: Memory;
   onSubmit: (data: MemoryFormData) => Promise<void>;
   onCancel: () => void;
 }
@@ -27,15 +28,29 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
-export default function MemoryForm({ location, onSubmit, onCancel }: MemoryFormProps) {
+export default function MemoryForm({ location, initialData, onSubmit, onCancel }: MemoryFormProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(
+    initialData?.date
+    ? new Date(initialData.date).toISOString().split('T')[0]
+    : new Date().toISOString().split('T')[0]
+  );
   const [stampType, setStampType] = useState('default');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
    // 画像アップロード関連のstate
-   const [uploadedFiles, setUploadedFiles] = useState<UploadedImage[]>([]);
+   const [uploadedFiles, setUploadedFiles] = useState<UploadedImage[]>(
+    initialData?.memoryImages
+     ? initialData.memoryImages.map(img => ({
+        id: img.id,
+        file: new File([], img.filename, { type: img.type === 'video' ? 'video/mp4' : 'image/jpeg' }),
+        preview: img.url,
+        type: (img.type as 'image' | 'video') || 'image',
+        filename: img.filename,
+        url: img.url
+      }))
+    : []);
    const [uploadError, setUploadError] = useState<string | null>(null);
    const fileInputRef = useRef<HTMLInputElement>(null);
    

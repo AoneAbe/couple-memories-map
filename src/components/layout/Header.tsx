@@ -66,7 +66,7 @@ export default function Header() {
                       <p className="text-xs text-gray-500 truncate">{session.user?.email}</p>
                     </div>
                     <button
-                      onClick={() => signOut({ callbackUrl: '/' })}
+                      onClick={() => signOut({ callbackUrl: '/login' })}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       ログアウト

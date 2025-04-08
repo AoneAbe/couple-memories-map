@@ -107,6 +107,12 @@ export default function LoginForm() {
           </div>
         </div>
 
+        <div className="flex items-center justify-end">
+          <Link href="/reset-password" className="text-sm text-blue-600 hover:text-blue-500">
+            パスワードをお忘れですか？
+          </Link>
+        </div>
+
         <div>
           <button
             type="submit"
