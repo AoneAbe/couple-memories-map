@@ -13,6 +13,7 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const urlError = searchParams.get('error')
 
   // URLパラメータをチェックして、登録成功のメッセージを表示
   useEffect(() => {
@@ -27,6 +28,13 @@ export default function LoginForm() {
     }
   }, [searchParams]);
     
+  // コンポーネントがマウントされた時、またはsearchParamsが変更された時に
+  // URLのエラーパラメータを内部状態に反映させる
+  useEffect(() => {
+    if (urlError) {
+      setError(urlError);
+    }
+  }, [urlError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
