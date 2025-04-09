@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { Route } from 'next';
 
 type ImageDataInput = {
   id?: string;
@@ -10,12 +11,16 @@ type ImageDataInput = {
   type: string;
 }
 
+interface RouteSegmentProps {
+  params: { id: string}
+}
+
 // PUT メソッドを追加
 export async function PUT(
-  request: NextRequest,
-  context: { params: { id: string } }
+  req: NextRequest,
+  props: RouteSegmentProps
 ) {
-  const { id } = context.params
+  const { id } = props.params
   try {
     const session = await getServerSession(authOptions);
     
@@ -26,7 +31,7 @@ export async function PUT(
       );
     }
     
-    const body = await request.json();
+    const body = await req.json();
     
     // 基本的なバリデーション
     if (!body.title || !body.latitude || !body.longitude) {
@@ -157,12 +162,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
+  req: NextRequest,
+  props: RouteSegmentProps
 ) {
-  const { id } = context.params
+  const { id } = props.params
   // ESLint
-  console.log(request)
+  console.log(req)
   try {
     const session = await getServerSession(authOptions);
     
