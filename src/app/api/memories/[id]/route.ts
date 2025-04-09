@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Route } from 'next';
+// import { Route } from 'next';
 
 type ImageDataInput = {
   id?: string;
