@@ -6,9 +6,9 @@ import prisma from '@/lib/prisma';
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params
+  const { id } = await params
   // ESLint
   console.log(request)
 
