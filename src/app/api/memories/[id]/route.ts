@@ -11,16 +11,12 @@ type ImageDataInput = {
   type: string;
 }
 
-interface RouteSegmentProps {
-  params: { id: string}
-}
-
 // PUT メソッドを追加
 export async function PUT(
   req: NextRequest,
-  props: RouteSegmentProps
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = props.params
+  const { id } = await params
   try {
     const session = await getServerSession(authOptions);
     
@@ -163,9 +159,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  props: RouteSegmentProps
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = props.params
+  const { id } = await params
   // ESLint
   console.log(req)
   try {
