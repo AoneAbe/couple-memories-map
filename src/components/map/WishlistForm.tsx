@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LocationWithDetails, WishlistPlace } from '@/utils/types';
+import { LocationWithDetails, PlaceDetails, WishlistPlace } from '@/utils/types';
 
 interface WishlistFormProps {
   location: LocationWithDetails;
@@ -34,7 +34,8 @@ export default function WishlistForm({ location, onSubmit, onCancel }: WishlistF
         priority,
         address: location.address,
         placeName: location.placeName,
-        placeDetails: location.fullDetails
+        // 明示的な型キャストを追加
+        placeDetails: location.fullDetails as PlaceDetails | null
       };
       
       await onSubmit(formData);
