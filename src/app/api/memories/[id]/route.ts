@@ -3,6 +3,13 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
+type ImageDataInput = {
+  id?: string;
+  url?: string;
+  filename: string;
+  type: string;
+}
+
 // PUT メソッドを追加
 export async function PUT(
   req: NextRequest,
@@ -50,7 +57,7 @@ export async function PUT(
     }
     
     // 画像データを抽出
-    const imageData = body.images?.map((img: {url?: string, filename: string, type: string, id?: string}) => {
+    const imageData = body.images?.map((img: ImageDataInput) => {
       // 既存の画像はそのまま（idがある場合）
       if (img.id) {
         return {
@@ -101,8 +108,8 @@ export async function PUT(
     
     // 送信された画像IDを取得
     const submittedImageIds = imageData
-      .filter((img: any) => img.id)
-      .map((img: any) => img.id);
+      .filter((img: ImageDataInput) => img.id)
+      .map((img: ImageDataInput) => img.id);
     
     // 削除する画像を特定
     const imagesToDelete = existingImageIds.filter(id => !submittedImageIds.includes(id));
@@ -117,11 +124,11 @@ export async function PUT(
     }
     
     // 新しい画像を追加
-    const newImages = imageData.filter((img: any) => !img.id);
+    const newImages = imageData.filter((img: ImageDataInput) => !img.id);
     
     if (newImages.length > 0) {
       await prisma.memoryImage.createMany({
-        data: newImages.map((img: any) => ({
+        data: newImages.map((img: ImageDataInput) => ({
           memoryId: id,
           url: img.url,
           filename: img.filename,

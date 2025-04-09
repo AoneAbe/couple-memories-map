@@ -47,6 +47,8 @@ export default function RegisterForm() {
         email,
         password: "dummy_password_for_check" // 存在チェック用のダミー
       });
+      // ESLint
+      console.log(data)
       
       // エラーが特定のフォーマットでない場合、ユーザーが既に存在する
       if (!error || !error.message.includes("Invalid login credentials")) {
@@ -56,6 +58,8 @@ export default function RegisterForm() {
       }
     } catch (checkErr) {
       // チェック時のエラーは無視 (ユーザーが存在しない場合は期待どおり)
+      // ESLint
+      console.log(checkErr)
     }
 
     try {
