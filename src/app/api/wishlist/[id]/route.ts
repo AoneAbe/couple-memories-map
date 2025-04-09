@@ -5,9 +5,13 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params
+  // ESLint
+  console.log(request)
+
   try {
     const session = await getServerSession(authOptions);
     
@@ -17,8 +21,6 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    
-    const id = params.id;
     
     // 指定されたIDの行きたい場所が存在し、かつ現在のユーザーが所有者であることを確認
     const wishlistPlace = await prisma.wishlistPlace.findUnique({

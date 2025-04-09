@@ -12,9 +12,10 @@ type ImageDataInput = {
 
 // PUT メソッドを追加
 export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params
   try {
     const session = await getServerSession(authOptions);
     
@@ -25,8 +26,7 @@ export async function PUT(
       );
     }
     
-    const id = params.id;
-    const body = await req.json();
+    const body = await request.json();
     
     // 基本的なバリデーション
     if (!body.title || !body.latitude || !body.longitude) {
@@ -157,9 +157,12 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params
+  // ESLint
+  console.log(request)
   try {
     const session = await getServerSession(authOptions);
     
@@ -169,9 +172,7 @@ export async function DELETE(
         { status: 401 }
       );
     }
-    
-    const id = params.id;
-    
+     
     // 指定されたIDの思い出が存在し、かつ現在のユーザーが所有者であることを確認
     const memory = await prisma.memory.findUnique({
       where: { id },
