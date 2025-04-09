@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 export async function POST(req: NextRequest) {
   try {
     const { name, email, supabaseId } = await req.json();
+    // ESLint
+    console.log(supabaseId)
     
     // 基本的なバリデーション
     if (!name || !email) {

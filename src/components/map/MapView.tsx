@@ -2,9 +2,9 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import { Memory, MemoryFormData, PlaceDetails, LocationWithDetails, WishlistPlace, FormMode, LocationMode } from '@/utils/types';
+import { Memory, MemoryFormData, PlaceDetails, LocationWithDetails, WishlistPlace, LocationMode } from '@/utils/types';
 import MemoryForm from './MemoryForm';
-import WishlistForm from './WishlistForm';
+// import WishlistForm from './WishlistForm';
 import CombinedLocationForm from './CombinedLocationForm';
 import { getPlaceDetails } from '@/utils/mapUtils';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ export default function MapView({
     googleMapsApiKey: apiKey
   });
 
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [, setMap] = useState<google.maps.Map | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<LocationWithDetails | null>(null);
   const [selectedMemory, setSelectedMemory] = useState<Memory | null>(null);
   const [selectedWishlist, setSelectedWishlist] = useState<WishlistPlace | null>(null); 

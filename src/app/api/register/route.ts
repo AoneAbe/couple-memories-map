@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
       email_confirm: true, // メール認証を自動的に完了する
       user_metadata: { name }
     });
+    // ESLint
+    console.log(authData)
     
     if (authError) {
       console.error('Supabase auth error:', authError);

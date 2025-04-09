@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LocationWithDetails, MemoryFormData, WishlistPlace } from '@/utils/types';
+import { LocationWithDetails, MemoryFormData, PlaceDetails, WishlistPlace, UploadedImage } from '@/utils/types';
 import Image from 'next/image';
 
 interface CombinedLocationFormProps {
@@ -47,7 +47,7 @@ export default function CombinedLocationForm({
   // 思い出固有のフィールド
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [stampType, setStampType] = useState('default');
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedImage[]>([]);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
@@ -89,7 +89,7 @@ export default function CombinedLocationForm({
           priority,
           address: location.address,
           placeName: location.placeName,
-          placeDetails: location.fullDetails
+          placeDetails: location.fullDetails as PlaceDetails | null
         };
         
         await onSubmitWishlist(wishlistData);
@@ -104,7 +104,57 @@ export default function CombinedLocationForm({
   
   // ファイル関連のハンドラー（既存のMemoryFormと同じ）
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 既存のコードと同じなので省略
+    const files = e.target.files;
+    setUploadError(null);
+      
+    if (!files || files.length === 0) return;
+      
+    // 選択されたファイルを処理
+    const newFiles: UploadedImage[] = [];
+    const filePromises: Promise<void>[] = [];
+      
+    Array.from(files).forEach(file => {
+      // ファイルタイプと容量のバリデーション
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type) && !ALLOWED_VIDEO_TYPES.includes(file.type)) {
+        setUploadError('画像（JPG、PNG、GIF、WebP）または動画（MP4、WebM、QuickTime）のみアップロードできます');
+        return;
+      }
+        
+      if (file.size > MAX_FILE_SIZE) {
+        setUploadError('ファイルサイズは1GB以下にしてください');
+        return;
+      }
+        
+      // ファイルをBase64に変換
+      const promise = new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target && e.target.result) {
+            const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
+            newFiles.push({
+              id: `temp-${Date.now()}-${newFiles.length}`,
+              file,
+              preview: e.target.result as string,
+              type: isVideo ? 'video' : 'image',
+              filename: file.name
+            });
+          }
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
+        
+      filePromises.push(promise);
+    });
+      
+    // すべてのファイル処理が完了したら状態を更新
+    Promise.all(filePromises).then(() => {
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      // 入力フィールドをリセットして複数回同じファイルを選択できるようにする
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    });
   };
   
   const removeFile = (id: string) => {

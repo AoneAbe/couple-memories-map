@@ -149,7 +149,7 @@ export interface WishlistPlace {
   priority: number; // 優先度（1-5等）
   address?: string | null;
   placeName?: string | null;
-  placeDetails?: any;
+  placeDetails?: PlaceDetails | null;
   createdAt: Date;
   updatedAt: Date;
   userId?: string | null;
