@@ -3,44 +3,44 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String?  @unique
-  password  String?
-  image     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  memories  Memory[]
-  wishlist  Wishlist[] // この行を追加
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  password       String?
+  image          String?
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
   wishlistPlaces WishlistPlace[]
+  memories       Memory[]
+  wishlist       Wishlist[]
 
   @@map("user")
 }
 
 model Memory {
-  id           String   @id @default(cuid())
+  id           String        @id @default(cuid())
   title        String
   description  String?
   latitude     Float
   longitude    Float
-  date         DateTime @default(now())
-  stampType    String   @default("default") @map("stamp_type")
-  createdAt    DateTime @default(now()) @map("created_at")
-  createdBy    String? @map("created_by")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  updatedBy    String? @map("updated_by")
-  userId       String? @map("user_id")
+  date         DateTime      @default(now())
+  stampType    String        @default("default") @map("stamp_type")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  createdBy    String?       @map("created_by")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  updatedBy    String?       @map("updated_by")
+  userId       String?       @map("user_id")
   address      String?
-  placeDetails Json? @map("place_details")
-  placeName    String? @map("place_name")
-  user         User?    @relation(fields: [userId], references: [id])
-  memoryImages MemoryImage[] 
+  placeDetails Json?         @map("place_details")
+  placeName    String?       @map("place_name")
+  user         User?         @relation(fields: [userId], references: [id])
+  memoryImages MemoryImage[]
 
   @@map("memories")
 }
@@ -52,47 +52,47 @@ model MemoryImage {
   type      String   @default("image")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  memoryId  String @map("memory_id")
-  createdBy String? @map("created_by")
-  updatedBy String? @map("updated_by")
+  memoryId  String   @map("memory_id")
+  createdBy String?  @map("created_by")
+  updatedBy String?  @map("updated_by")
   memory    Memory   @relation(fields: [memoryId], references: [id])
-  
-  @@map("memory_images") // テーブル名とモデル名のマッピング
+
+  @@map("memory_images")
 }
 
 model Wishlist {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  latitude    Float
-  longitude   Float
-  address     String?
-  placeName   String? @map("place_name")
-  placeDetails Json? @map("place_details")
-  priority    Int      @default(0)
-  isVisited   Boolean  @default(false) @map("is_visited")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  userId      String   // この行を追加
-  createdBy   String? @map("created_by")
-  updatedBy   String? @map("updated_by")
-  user        User     @relation(fields: [userId], references: [id])
-  
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  latitude     Float
+  longitude    Float
+  address      String?
+  placeName    String?  @map("place_name")
+  placeDetails Json?    @map("place_details")
+  priority     Int      @default(0)
+  isVisited    Boolean  @default(false) @map("is_visited")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  userId       String
+  createdBy    String?  @map("created_by")
+  updatedBy    String?  @map("updated_by")
+  user         User     @relation(fields: [userId], references: [id])
+
   @@map("wishlist")
 }
 
 model WishlistPlace {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  latitude    Float
-  longitude   Float
-  priority    Int      @default(3)
-  address     String?
-  placeName   String? @map("place_name")
-  placeDetails Json? @map("place_details")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  userId      String? @map("user_id")
-  user        User?    @relation(fields: [userId], references: [id])
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  latitude     Float
+  longitude    Float
+  priority     Int      @default(3)
+  address      String?
+  placeName    String?  @map("place_name")
+  placeDetails Json?    @map("place_details")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  userId       String?  @map("user_id")
+  user         User?    @relation(fields: [userId], references: [id])
 }

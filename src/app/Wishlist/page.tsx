@@ -9,20 +9,26 @@ export const metadata: Metadata = {
 };
 
 export default async function WishlistPage() {
-  // サーバーコンポーネントでデータを取得
-  const wishlistPlacesData = await prisma.wishlistPlace.findMany({
-    orderBy: [
-      { priority: 'desc' },
-      { createdAt: 'desc' },
-    ],
-  });
+  try {
+    // サーバーコンポーネントでデータを取得
+    const wishlistPlacesData = await prisma.wishlistPlace.findMany({
+      orderBy: [
+        { priority: 'desc' },
+        { createdAt: 'desc' },
+      ],
+    });
 
-  // 型を合わせるために明示的に変換
-  const wishlistPlaces: WishlistPlace[] = wishlistPlacesData.map(place => ({
-    ...place,
-    // placeDetailsをPlaceDetails型に変換（または適切な型で対応）
-    placeDetails: place.placeDetails as PlaceDetails | null
-  }));
+    // 型を合わせるために明示的に変換
+    const wishlistPlaces: WishlistPlace[] = wishlistPlacesData.map(place => ({
+      ...place,
+      // placeDetailsをPlaceDetails型に変換（または適切な型で対応）
+      placeDetails: place.placeDetails as PlaceDetails | null
+    }));
 
-  return <WishlistPlacesList initialPlaces={wishlistPlaces} />;
+    return <WishlistPlacesList initialPlaces={wishlistPlaces} />;
+  } catch (error) {
+    console.error('Error fetching wishlist places:', error);
+    // エラー時も空の配列を渡して表示
+    return <WishlistPlacesList initialPlaces={[]} />;
+  }
 }
