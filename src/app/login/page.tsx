@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import LoginForm from './LoginForm';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'ログイン | Couple Memories Map',
@@ -8,13 +9,11 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 to-blue-200 p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600">Couple Memories Map</h1>
-          <h2 className="mt-2 text-2xl font-bold text-gray-900">アカウントにログイン</h2>
-        </div>
-        <LoginForm />
+        <Suspense fallback={<div className="bg-white py-8 px-6 shadow rounded-lg text-center">Loading...</div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
